@@ -28,7 +28,8 @@ require_once 'pdo_connection.php';
                 <td><?php echo($data['id']); ?></td>
                 <td><?php echo($data['titre']); ?></td>
                 <td><?php echo($data['contenu']); ?></td>
-                <td><?php echo($data['image_link']); ?></td>
+                <td><img style="max-width: 140px;" src="<?php echo('images/upload/'.$data['image_link']); ?>"
+                            alt="Image de l'article <?php echo($data['image_link']); ?>"/></td>
 
     </tr>
     <?php

@@ -1,7 +1,7 @@
 <?php
-session_start();
+
 function isUserConnecter(){
-  
+    session_start();
     if($_SESSION['utilisateur']){
         return $_SESSION['utilisateur'];
     } else {
@@ -29,6 +29,7 @@ function login($pdo, $login) {
         session_destroy();
     } else {
         $_SESSION['utilisateur'] = $res['login'];
+        
     }
     return $errors;
 }
