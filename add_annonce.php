@@ -4,13 +4,13 @@ include 'homepage.php';
 require_once 'pdo_connection.php';
 require_once 'functions.php';
 $errors = [];
-$image_link = null;
+$imageUrl = null;
 if ( $_SERVER['REQUEST_METHOD'] === 'POST'){
     $returnValidation = validateForm();
     $errors = $returnValidation['errors'];
 
     if( count($errors) === 0) {
-        add_annonce($pdo);
+        add_annonce($pdo, $returnValidation['image']);
         header('Location: list_annonces.php');
     }
 }
@@ -20,7 +20,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST'){
 
 <div class="container my-2">
     <h1 class="text-center shadow p-2">Ajouter une annonce</h1>
-    <form method="post" action="add_annonce.php" class="p-5 shadow" >
+    <form method="post" action="add_annonce.php" class="p-5 shadow" enctype="multipart/form-data">
 
         <div class="form-group">
             <label>titre de l'annonce</label>
@@ -31,9 +31,9 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST'){
             <input type="text" name="contenu" class="form-control" placeholder="Contenu de l'annonce">
         </div>
         <div class="form-group">
-            <label>Lien de l'image</label>
-            <input type="text" name="image_link" class="form-control" placeholder="url de l'image">
-        </div>
+                <label class="text-white">Image de l'article</label>
+                <input type="file" name="image" class="text-white">
+            </div>
         <button  type="submit" class="btn btn-success" href="list_annonces.php">Ajouter</button>
         
         <?php

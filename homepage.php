@@ -13,6 +13,6 @@
 <?php
     include 'menu.php';
 ?>
-<h1>Bonjour <?php echo($user['nom']);?></h1>
+<h1>Bonjour <?php echo($_SESSION['utilisateur']);?></h1>
 </body>
 </html>

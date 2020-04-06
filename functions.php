@@ -28,7 +28,7 @@ function login($pdo, $login) {
         $errors[] = 'Utilisateur inconnu';
         session_destroy();
     } else {
-        $_SESSION['utilisateur'] = $res;
+        $_SESSION['utilisateur'] = $res['login'];
     }
     return $errors;
 }
@@ -71,20 +71,17 @@ function validateFormUser(){
     return $error;
 }
 
-function add_annonce($pdo){
+function add_annonce($pdo, $imageUrl){
   
-    var_dump($_POST);
-     die();
-     $nomUser = $_SESSION['utilisateur']['nom'].' '.$_SESSION['utilisateur']['prenom'];
     $req = $pdo->prepare(
-        'INSERT INTO annonce(im age_link, contenu, titre, nom_prenom_utilisateur )
-    VALUES(:image_link, :contenu, :titre)');
+        'INSERT INTO annonce(image_link, contenu, titre, nom_prenom_utilisateur )
+    VALUES(:image_link, :contenu, :titre, :nom_prenom_utilisateur)');
 
     $req->execute([
-        'image_link' => $_POST['image_link'],
+        'image_link' => $imageUrl,
         'contenu' => $_POST['contenu'],
         'titre' => $_POST['titre'],
-        'nom_prenom_utilisateur' => $user['nom']
+        'nom_prenom_utilisateur' => $_SESSION['utilisateur'],
         
     ]);
 
@@ -92,6 +89,21 @@ function add_annonce($pdo){
 
 function validateForm() {
     $errors = [];
+    $imageUrl = null;
+    $allowedExtension = ['image/png','image/jpeg','image/gif'];
+    if($_FILES['image']['size'] == 0){
+        $errors[] = '<div class="alert alert-danger" role="alert">Veuillez ajouter une image</div>';
+    }
+    if(in_array($_FILES['image']['type'],$allowedExtension)){
+        if($_FILES['image']['size'] < 8000000){
+            $extension = explode('/', $_FILES['image']['type'])[1];
+            $imageUrl = uniqid().'.'.$extension;
+            move_uploaded_file($_FILES['image']['tmp_name'],'images/upload/'.$imageUrl);
+        }
+        else {
+            $errors[] = '<div class="alert alert-danger" role="alert">Fichier trop lourd</div> ';
+        }
+    } 
    
     if (empty($_POST['titre'])) {
         $errors[] = 'Veuillez saisir le titre de la planète';
@@ -101,11 +113,8 @@ function validateForm() {
         $errors[] = 'Veuillez saisir le contenu';
     }
 
-    if ( empty($_POST['image_link'])) {
-        $errors[] = 'Veuillez saisir l\'url de l\'image';
-    }
 
-    return ['errors'=>$errors];
+    return ['errors'=>$errors, 'image'=>$imageUrl];
 }
 
 
